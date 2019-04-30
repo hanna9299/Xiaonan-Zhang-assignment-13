@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# 1
+library(tidyverse)
+
+marriage <- gss_cat %>%
+  filter(year > 2013, marital != "Never married", 
+         marital != "No answer") %>%
+  mutate(marital = fct_drop(marital))
+
+levels(marriage$marital)
+
+# 2
+freq <- marriage %>%
+  count(marital, sort = TRUE)
+
+# 3
+ggplot(freq, aes(x = reorder(marital, n), y = n)) + 
+  geom_bar(stat = "identity")
+# or
+marriage$marital <- fct_infreq(marriage$marital)
+marriage$marital <- fct_rev(marriage$marital)
+ggplot(marriage, aes(x = marital)) + 
+  geom_bar()
+
+# 4
+marriage %>%
+  group_by(marital) %>%
+  summarize(mean.age = mean(age, na.rm = TRUE))
+
+# 5
+marriage %>%
+  mutate(rincome = fct_collapse(rincome, other = c("No answer", "Don't know", "Not applicable", "Refused"))) %>%
+  ggplot(aes(x = age, y = rincome, color = marital)) +
+  geom_point()
+```
+
+>**I would like to thank you for your lectures. I really learned a lot from this course. Can't imagine I never used R four months agao and now I rely on it so much. This course is a really good start for me. Now I'm confident in doing research analysis by independet studies. I really appreciate your help, Dr. Seaman! **  
